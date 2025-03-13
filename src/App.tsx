@@ -46,7 +46,7 @@ function App() {
         {error && <p className="text-red-500">{error}</p>}
 
         {/* Posts List */}
-        <Column posts={posts} />
+        {error && <Column posts={posts} subreddit={subreddit} />}
       </div>
     </div>
   );
