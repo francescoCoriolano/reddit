@@ -3,6 +3,7 @@ import { useState } from "react";
 import "./App.css";
 import Nav from "./components/Nav";
 import { fetchSubredditPosts } from "./services/getSubreddit";
+import Column from "./components/Column";
 function App() {
   const [subreddit, setSubreddit] = useState("");
   const [posts, setPosts] = useState<any[]>([]);
@@ -24,37 +25,30 @@ function App() {
       setLoading(false);
     }
   };
-
+  // Handle Enter key press
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleFetch();
+    }
+  };
   return (
-    <>
-      <Nav onChangeInput={setSubreddit} submit={handleFetch} />
-      {/* Loading State */}
-      {loading && <p className="text-gray-500">Loading...</p>}
+    <div>
+      <Nav
+        onChangeInput={setSubreddit}
+        submit={handleFetch}
+        handleKeyDown={handleKeyDown}
+      />
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        {/* Loading State */}
+        {loading && <p className="text-gray-500">Loading...</p>}
 
-      {/* Error Message */}
-      {error && <p className="text-red-500">{error}</p>}
-      {/* Posts List */}
-      <div className="mt-4">
-        {posts.length > 0 ? (
-          <ul className="space-y-2">
-            {posts.map((post) => (
-              <li key={post.id} className="border p-2 rounded-md">
-                <a
-                  href={`https://www.reddit.com${post.permalink}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-500 hover:underline"
-                >
-                  {post.title}
-                </a>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          !loading && !error && <p>No posts found.</p>
-        )}
+        {/* Error Message */}
+        {error && <p className="text-red-500">{error}</p>}
+
+        {/* Posts List */}
+        <Column posts={posts} />
       </div>
-    </>
+    </div>
   );
 }
 
