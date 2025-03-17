@@ -1,23 +1,54 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 import Nav from "./components/Nav";
 import { fetchSubredditPosts } from "./services/getSubreddit";
 import Column from "./components/Column";
+interface Post {
+  id: string;
+  permalink: string;
+  title: string;
+  author: string;
+  num_comments: number;
+  ups: number;
+}
+interface columnData {
+  title: string;
+  content: Post[];
+}
 function App() {
-  const [subreddit, setSubreddit] = useState("");
-  const [posts, setPosts] = useState<any[]>([]);
+  const [subredditName, setSubredditName] = useState("");
+  const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [columnData, setColumnData] = useState<columnData>({
+    title: "",
+    content: [],
+  });
+  const [columnList, setColumnList] = useState<columnData[]>([]);
+
+  useEffect(() => {
+    const savedData = localStorage.getItem("savedSubreddits");
+    if (savedData) {
+      setColumnList(JSON.parse(savedData));
+    }
+  }, []);
 
   const handleFetch = async () => {
-    if (!subreddit) return;
+    if (!subredditName) return;
     setLoading(true);
     setError("");
 
     try {
-      const fetchedPosts = await fetchSubredditPosts(subreddit);
-      setPosts(fetchedPosts);
+      const fetchedPosts = await fetchSubredditPosts(subredditName);
+      const newColumnData = {
+        title: subredditName,
+        content: fetchedPosts,
+      };
+      setColumnData(newColumnData);
+      columnList.push(newColumnData);
+
+      localStorage.setItem("savedSubreddits", JSON.stringify(columnList));
     } catch (err: any) {
       setError(err.message);
       setPosts([]);
@@ -25,16 +56,18 @@ function App() {
       setLoading(false);
     }
   };
+
   // Handle Enter key press
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       handleFetch();
     }
   };
+  console.log("posts", posts);
   return (
     <div>
       <Nav
-        onChangeInput={setSubreddit}
+        onChangeInput={setSubredditName}
         submit={handleFetch}
         handleKeyDown={handleKeyDown}
       />
@@ -45,8 +78,12 @@ function App() {
         {/* Error Message */}
         {error && <p className="text-red-500">{error}</p>}
 
-        {/* Posts List */}
-        {error && <Column posts={posts} subreddit={subreddit} />}
+        <div className="flex flex-row w-[100%]">
+          {columnList &&
+            columnList.map((column) => (
+              <Column subredditName={column.title} posts={column.content} />
+            ))}
+        </div>
       </div>
     </div>
   );

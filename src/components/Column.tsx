@@ -9,15 +9,15 @@ interface Post {
   ups: number;
 }
 
-interface ColumnProps {
+interface ColumnData {
+  subredditName: string;
   posts: Post[];
-  subreddit: string;
 }
 
-const Column: React.FC<ColumnProps> = ({ posts, subreddit }) => {
+const Column: React.FC<ColumnData> = ({ subredditName, posts }) => {
   return (
-    <div className="mt-4 w-[17%] border-x-2 px-3 max-h-[100vh] overflow-scroll">
-      <h2 className="font-bold py-4"> 🔴 {subreddit}</h2>
+    <div className="mt-4 max-w-[17%] border-x-2 px-3 max-h-[100vh] overflow-scroll">
+      <h2 className="font-bold py-4"> 🔴 {subredditName}</h2>
       {posts.length > 0 && (
         <ul className="space-y-2">
           {posts.map((post) => (
