@@ -70,6 +70,14 @@ function App() {
     }
   };
 
+  const handleDeleteColumn = (subredditName: string) => {
+    const updatedColumns = columnList.filter(
+      (column) => column.title !== subredditName
+    );
+    setColumnList(updatedColumns);
+    localStorage.setItem("savedSubreddits", JSON.stringify(updatedColumns));
+  };
+
   return (
     <div>
       <Nav
@@ -90,6 +98,7 @@ function App() {
               key={index}
               subredditName={column.title}
               posts={column.content}
+              onDelete={handleDeleteColumn}
             />
           ))}
         </div>
