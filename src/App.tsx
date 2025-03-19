@@ -37,7 +37,12 @@ function App() {
     if (!subredditName.trim()) return;
     setLoading(true);
     setError("");
-
+    if (columnList.some((obj) => obj.title === subredditName)) {
+      alert("Subreddit already exists");
+      setSubredditName("");
+      setLoading(false);
+      return;
+    }
     try {
       const fetchedPosts = await fetchSubredditPosts(subredditName);
       const newColumnData = {
@@ -45,14 +50,12 @@ function App() {
         content: fetchedPosts,
       };
 
-      // FIX: Properly update state instead of mutating columnList
       const updatedColumns = [...columnList, newColumnData];
       setColumnList(updatedColumns);
 
       // Save to localStorage
       localStorage.setItem("savedSubreddits", JSON.stringify(updatedColumns));
 
-      // FIX: Clear input AFTER successfully adding a column
       setSubredditName("");
     } catch (err: any) {
       setError(err.message);
@@ -77,7 +80,7 @@ function App() {
     setColumnList(updatedColumns);
     localStorage.setItem("savedSubreddits", JSON.stringify(updatedColumns));
   };
-
+  console.log("columnList", columnList);
   return (
     <div>
       <Nav
