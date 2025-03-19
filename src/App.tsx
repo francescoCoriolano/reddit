@@ -5,6 +5,8 @@ import "./App.css";
 import Nav from "./components/Nav";
 import { fetchSubredditPosts } from "./services/getSubreddit";
 import Column from "./components/Column";
+import { AlertDialog } from "@/components/ui/alert-dialog";
+import { AlertMessageDialog } from "./components/SubredditExistsDialog";
 
 interface Post {
   id: string;
@@ -25,7 +27,7 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [columnList, setColumnList] = useState<ColumnData[]>([]);
-
+  const [subredditExists, setSubredditExists] = useState(false);
   useEffect(() => {
     const savedData = localStorage.getItem("savedSubreddits");
     if (savedData) {
@@ -38,7 +40,7 @@ function App() {
     setLoading(true);
     setError("");
     if (columnList.some((obj) => obj.title === subredditName)) {
-      alert("Subreddit already exists");
+      setSubredditExists(true);
       setSubredditName("");
       setLoading(false);
       return;
@@ -92,9 +94,40 @@ function App() {
 
       <div className="flex flex-col items-center justify-center min-h-screen over">
         {/* Loading State */}
+
         {loading && <p className="text-gray-500">Loading...</p>}
         {/* Error Message */}
-        {error && <p className="text-red-500">{error}</p>}
+        {/* {error && <p className="text-red-500">{error}</p>} */}
+        {subredditExists || error ? (
+          <div className="w-[100vw] h-[100vh] z-50 bg-gray-200/50 fixed top-0 left-0 flex justify-center items-center">
+            <AlertDialog
+              open={subredditExists || error !== ""}
+              onOpenChange={() => {
+                setSubredditExists(false);
+                setError("");
+              }}
+            >
+              <AlertMessageDialog
+                onClose={() => {
+                  setSubredditExists(false);
+                  setError("");
+                }}
+                title={
+                  (subredditExists && "Subreddit Already Exists") ||
+                  (error && "Error")
+                }
+                message={
+                  (subredditExists &&
+                    "This subreddit is already in your columns list. Please try adding a different subreddit.") ||
+                  (error && "Please enter a valid subreddit name.")
+                }
+              />
+            </AlertDialog>
+          </div>
+        ) : (
+          ""
+        )}
+
         <div className="flex w-full max-w-[120rem] overflow-x-auto">
           {columnList.map((column, index) => (
             <Column
