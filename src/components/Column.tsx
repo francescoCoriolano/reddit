@@ -1,5 +1,6 @@
 import React from "react";
 import Card from "./Card";
+
 interface Post {
   id: string;
   permalink: string;
@@ -17,7 +18,11 @@ interface ColumnData {
 const Column: React.FC<ColumnData> = ({ subredditName, posts }) => {
   return (
     <div className="mt-4 min-w-[14rem] border-r-2 px-3 max-h-screen overflow-y-auto">
-      <h2 className="font-bold py-4 capitalize"> {subredditName}</h2>
+      <h2 className="font-bold py-4 capitalize text-reddit bg-reddit-orange text-white">
+        {" "}
+        {subredditName}
+      </h2>
+
       {posts.length > 0 && (
         <ul className="space-y-2">
           {posts.map((post) => (

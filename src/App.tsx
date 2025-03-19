@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
+import "./index.css";
 import "./App.css";
 import Nav from "./components/Nav";
 import { fetchSubredditPosts } from "./services/getSubreddit";
@@ -77,13 +78,12 @@ function App() {
         handleKeyDown={handleKeyDown}
         value={subredditName}
       />
+
       <div className="flex flex-col items-center justify-center min-h-screen over">
         {/* Loading State */}
         {loading && <p className="text-gray-500">Loading...</p>}
-
         {/* Error Message */}
         {error && <p className="text-red-500">{error}</p>}
-
         <div className="flex w-full max-w-[120rem] overflow-x-auto">
           {columnList.map((column, index) => (
             <Column
