@@ -1,6 +1,8 @@
 import React from "react";
 import Card from "./Card";
 import { Button } from "@/components/ui/button";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 interface Post {
   id: string;
   permalink: string;
@@ -11,14 +13,32 @@ interface Post {
 }
 
 interface ColumnData {
+  id: string;
   subredditName: string;
   posts: Post[];
   onDelete: (subredditName: string) => void;
 }
 
-const Column: React.FC<ColumnData> = ({ subredditName, posts, onDelete }) => {
+const Column: React.FC<ColumnData> = ({
+  subredditName,
+  posts,
+  onDelete,
+  id,
+}) => {
+  const { attributes, listeners, setNodeRef, transform, transition } =
+    useSortable({ id });
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
   return (
-    <div className="mt-4 min-w-[14rem] border-r-2 px-3 max-h-screen overflow-y-auto">
+    <div
+      ref={setNodeRef}
+      {...attributes}
+      {...listeners}
+      style={style}
+      className="mt-4 min-w-[14rem] border-r-2 px-3 max-h-screen overflow-y-auto"
+    >
       <div className="flex justify-between items-center font-bold py-4 capitalize text-reddit bg-reddit-orange text-white">
         <h2>{subredditName}</h2>
         <Button

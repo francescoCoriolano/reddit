@@ -5,9 +5,11 @@ import "./App.css";
 import Nav from "./components/Nav";
 import { fetchSubredditPosts } from "./services/getSubreddit";
 import Column from "./components/Column";
-import { AlertDialog } from "@/components/ui/alert-dialog";
+import { AlertDialog } from "./components/ui/alert-dialog";
 import { AlertMessageDialog } from "./components/SubredditExistsDialog";
-
+import { DndContext, DragEndEvent } from "@dnd-kit/core";
+import { arrayMove, SortableContext } from "@dnd-kit/sortable";
+import { restrictToHorizontalAxis } from "@dnd-kit/modifiers";
 interface Post {
   id: string;
   permalink: string;
@@ -18,6 +20,7 @@ interface Post {
 }
 
 interface ColumnData {
+  id: string;
   title: string;
   content: Post[];
 }
@@ -37,17 +40,19 @@ function App() {
 
   const handleFetch = async () => {
     if (!subredditName.trim()) return;
-    setLoading(true);
-    setError("");
+
     if (columnList.some((obj) => obj.title === subredditName)) {
       setSubredditExists(true);
       setSubredditName("");
       setLoading(false);
       return;
     }
+    setLoading(true);
+    setError("");
     try {
       const fetchedPosts = await fetchSubredditPosts(subredditName);
       const newColumnData = {
+        id: crypto.randomUUID(),
         title: subredditName,
         content: fetchedPosts,
       };
@@ -83,6 +88,17 @@ function App() {
     localStorage.setItem("savedSubreddits", JSON.stringify(updatedColumns));
   };
   console.log("columnList", columnList);
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (over && active.id !== over.id) {
+      setColumnList((items) => {
+        const oldIndex = items.findIndex((item) => item.id === active.id);
+        const newIndex = items.findIndex((item) => item.id === over.id);
+        return arrayMove(items, oldIndex, newIndex);
+      });
+    }
+  };
   return (
     <div>
       <Nav
@@ -129,14 +145,22 @@ function App() {
         )}
 
         <div className="flex w-full max-w-[120rem] overflow-x-auto">
-          {columnList.map((column, index) => (
-            <Column
-              key={index}
-              subredditName={column.title}
-              posts={column.content}
-              onDelete={handleDeleteColumn}
-            />
-          ))}
+          <DndContext
+            modifiers={[restrictToHorizontalAxis]}
+            onDragEnd={handleDragEnd}
+          >
+            <SortableContext items={columnList}>
+              {columnList.map((column) => (
+                <Column
+                  key={column.id}
+                  id={column.id}
+                  subredditName={column.title}
+                  posts={column.content}
+                  onDelete={handleDeleteColumn}
+                />
+              ))}
+            </SortableContext>
+          </DndContext>
         </div>
       </div>
     </div>
