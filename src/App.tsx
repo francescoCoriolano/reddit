@@ -31,6 +31,7 @@ function App() {
   const [error, setError] = useState("");
   const [columnList, setColumnList] = useState<ColumnData[]>([]);
   const [subredditExists, setSubredditExists] = useState(false);
+
   useEffect(() => {
     const savedData = localStorage.getItem("savedSubreddits");
     if (savedData) {
@@ -87,10 +88,12 @@ function App() {
     setColumnList(updatedColumns);
     localStorage.setItem("savedSubreddits", JSON.stringify(updatedColumns));
   };
+
   console.log("columnList", columnList);
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
+    // if the ID of the dragged item is different of the id of where the item have been dropped
     if (over && active.id !== over.id) {
       setColumnList((items) => {
         const oldIndex = items.findIndex((item) => item.id === active.id);
@@ -113,7 +116,6 @@ function App() {
 
         {loading && <p className="text-gray-500">Loading...</p>}
         {/* Error Message */}
-        {/* {error && <p className="text-red-500">{error}</p>} */}
         {subredditExists || error ? (
           <div className="w-[100vw] h-[100vh] z-50 bg-gray-200/50 fixed top-0 left-0 flex justify-center items-center">
             <AlertDialog

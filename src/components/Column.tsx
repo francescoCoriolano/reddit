@@ -27,9 +27,11 @@ const Column: React.FC<ColumnData> = ({
 }) => {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id });
+
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
+    cursor: "grab",
   };
   return (
     <div
