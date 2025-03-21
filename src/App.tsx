@@ -10,6 +10,9 @@ import { AlertMessageDialog } from "./components/SubredditExistsDialog";
 import { DndContext, DragEndEvent } from "@dnd-kit/core";
 import { arrayMove, SortableContext } from "@dnd-kit/sortable";
 import { restrictToHorizontalAxis } from "@dnd-kit/modifiers";
+import { ThemeProvider } from "./components/ui/theme-provider";
+import { ThemeToggle } from "./components/ui/theme-toggle";
+
 interface Post {
   id: string;
   permalink: string;
@@ -103,69 +106,72 @@ function App() {
     }
   };
   return (
-    <div>
-      <Nav
-        onChangeInput={setSubredditName}
-        submit={handleFetch}
-        handleKeyDown={handleKeyDown}
-        value={subredditName}
-      />
+    <ThemeProvider defaultTheme="system">
+      <div className="min-h-screen bg-white dark:bg-zinc-950 transition-colors">
+        <Nav
+          onChangeInput={setSubredditName}
+          submit={handleFetch}
+          handleKeyDown={handleKeyDown}
+          value={subredditName}
+        />
+        <div className="fixed top-4 right-4">
+          <ThemeToggle />
+        </div>
 
-      <div className="flex flex-col items-center justify-center min-h-screen over">
-        {/* Loading State */}
+        <div className="flex flex-col items-center justify-center min-h-screen">
+          {/* Loading State */}
+          {loading && <p className="text-gray-500">Loading...</p>}
 
-        {loading && <p className="text-gray-500">Loading...</p>}
-        {/* Error Message */}
-        {subredditExists || error ? (
-          <div className="w-[100vw] h-[100vh] z-50 bg-gray-200/50 fixed top-0 left-0 flex justify-center items-center">
-            <AlertDialog
-              open={subredditExists || error !== ""}
-              onOpenChange={() => {
-                setSubredditExists(false);
-                setError("");
-              }}
-            >
-              <AlertMessageDialog
-                onClose={() => {
+          {/* Error Message */}
+          {subredditExists || error ? (
+            <div className="w-[100vw] h-[100vh] z-50 bg-gray-200/50 dark:bg-zinc-900/50 fixed top-0 left-0 flex justify-center items-center">
+              <AlertDialog
+                open={subredditExists || error !== ""}
+                onOpenChange={() => {
                   setSubredditExists(false);
                   setError("");
                 }}
-                title={
-                  (subredditExists && "Subreddit Already Exists") ||
-                  (error && "Error")
-                }
-                message={
-                  (subredditExists &&
-                    "This subreddit is already in your columns list. Please try adding a different subreddit.") ||
-                  (error && "Please enter a valid subreddit name.")
-                }
-              />
-            </AlertDialog>
-          </div>
-        ) : (
-          ""
-        )}
-
-        <div className="flex w-full max-w-[120rem] overflow-x-auto">
-          <DndContext
-            modifiers={[restrictToHorizontalAxis]}
-            onDragEnd={handleDragEnd}
-          >
-            <SortableContext items={columnList}>
-              {columnList.map((column) => (
-                <Column
-                  key={column.id}
-                  id={column.id}
-                  subredditName={column.title}
-                  posts={column.content}
-                  onDelete={handleDeleteColumn}
+              >
+                <AlertMessageDialog
+                  onClose={() => {
+                    setSubredditExists(false);
+                    setError("");
+                  }}
+                  title={
+                    (subredditExists && "Subreddit Already Exists") ||
+                    (error && "Error")
+                  }
+                  message={
+                    (subredditExists &&
+                      "This subreddit is already in your columns list. Please try adding a different subreddit.") ||
+                    (error && "Please enter a valid subreddit name.")
+                  }
                 />
-              ))}
-            </SortableContext>
-          </DndContext>
+              </AlertDialog>
+            </div>
+          ) : null}
+
+          <div className="flex w-full max-w-[120rem] overflow-x-auto">
+            <DndContext
+              modifiers={[restrictToHorizontalAxis]}
+              onDragEnd={handleDragEnd}
+            >
+              <SortableContext items={columnList}>
+                {columnList.map((column) => (
+                  <Column
+                    key={column.id}
+                    id={column.id}
+                    subredditName={column.title}
+                    posts={column.content}
+                    onDelete={handleDeleteColumn}
+                  />
+                ))}
+              </SortableContext>
+            </DndContext>
+          </div>
         </div>
       </div>
-    </div>
+    </ThemeProvider>
   );
 }
 

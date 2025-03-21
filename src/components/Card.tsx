@@ -14,12 +14,12 @@ interface Post {
 const Card = ({ permalink, title, author, ups, num_comments }: Post) => {
   return (
     <TooltipProvider>
-      <div className="flex flex-col max-w-[14rem] text-white overflow-auto">
+      <div className="flex flex-col max-w-[14rem] text-black dark:text-white overflow-auto">
         <a
           href={`https://www.reddit.com${permalink}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-white "
+          //className="text-white "
         >
           <Tooltip>
             <TooltipTrigger>

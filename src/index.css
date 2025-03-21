@@ -1,8 +1,16 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@custom-variant dark (&:where(.dark, .dark *));
 
 @custom-variant light (&:is(.light *));
 
+.bg-base {
+  background-color: var(--color-bg);
+}
+
+.text-base {
+  color: var(--color-text);
+}
 :root {
   --radius: 0.625rem;
   --background: oklch(0.145 0 0);
@@ -39,6 +47,8 @@
 }
 
 .light {
+  --color-bg: #ffffff;
+  --color-text: #000000;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -117,4 +127,9 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+[data-theme="dark"] {
+  --color-bg: #000000;
+  --color-text: #ffffff;
 }

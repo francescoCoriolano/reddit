@@ -41,7 +41,7 @@ const Column: React.FC<ColumnData> = ({
       style={style}
       className="mt-4 min-w-[14rem] border-r-2 px-3 max-h-screen overflow-y-auto"
     >
-      <div className="flex justify-between items-center font-bold py-4 capitalize text-reddit bg-reddit-orange text-white">
+      <div className="flex justify-between items-center font-bold py-4 capitalize text-reddit bg-reddit-orange text-black dark:text-white">
         <h2>{subredditName}</h2>
         <Button
           onClick={() => onDelete(subredditName)}

@@ -14,13 +14,15 @@ const Nav: React.FC<NavProps> = ({
   value,
 }) => {
   return (
-    <nav className="bg-gray-900 text-white p-4 w-[100vw]  ">
+    <nav className="bg-sidebar-ring dark:bg-gray-800 text-white p-4 w-[100vw]  ">
       <div className="container mx-auto flex items-center justify-between">
         {/* Logo */}
-        <h1 className="text-xl font-bold">Reddit Multi-Viewer</h1>
+        <h1 className="text-xl font-bold text-black dark:text-white ">
+          Reddit Multi-Viewer
+        </h1>
 
         {/* Search Input & Button */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 mr-14 bg-blend-darken">
           <input
             type="text"
             placeholder="Search subreddit..."
