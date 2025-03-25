@@ -1,5 +1,6 @@
 import React from "react";
-
+import { logout } from "../auth";
+import { useNavigate } from "react-router";
 interface NavProps {
   onChangeInput: (value: string) => void;
   submit: () => void;
@@ -13,6 +14,13 @@ const Nav: React.FC<NavProps> = ({
   handleKeyDown,
   value,
 }) => {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
+
   return (
     <nav className="bg-sidebar-ring dark:bg-gray-800 text-white p-4 w-[100vw]  ">
       <div className="container mx-auto flex items-center justify-between">
@@ -36,6 +44,12 @@ const Nav: React.FC<NavProps> = ({
             onClick={submit}
           >
             Add
+          </button>
+          <button
+            className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg"
+            onClick={handleLogout}
+          >
+            Logout
           </button>
         </div>
       </div>
